@@ -16,7 +16,9 @@ class ProxyServer:
         self.app = FastAPI()
         self.backend_url = backend_url.rstrip('/')
         self.setup_middleware()
+        {% if frontend %}
         self.setup_static_files()
+        {% endif %}
         self.setup_routes()
         self.client = httpx.AsyncClient()
         
@@ -42,12 +44,13 @@ class ProxyServer:
             
         @self.app.get("/", response_class=HTMLResponse)
         async def read_root():
+            {% if frontend %}
             if os.path.exists(self.index_html_path):
                 async with aiofiles.open(self.index_html_path, "r") as f:
                     content = await f.read()
                 return HTMLResponse(content=content)
-            else:
-                return HTMLResponse(content="<h1>Welcome to Proxy Server</h1>")
+            {% endif %}
+            return HTMLResponse(content="<h1>Welcome to Proxy Server</h1>")
                 
         @self.app.get("/proxy/backend_url")
         async def get_backend_url():
