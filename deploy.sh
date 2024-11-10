@@ -1,11 +1,13 @@
 #!/bin/bash
 
 # 项目名称
-project="projects-tools"
+project="projects_tools"
+
+ROOT_DIR=$(pwd)
 
 # 使用Python一行命令提取版本号，减少对grep和cut的依赖
 version=$(python -c "with open('src/projects_tools/version.py') as f: print([line.split('=')[1].strip().strip('\"') for line in f if '__version__' in line][0])")
-echo "Version: $version"
+echo "Build ${project} ${version}"
 
 # 清理dist目录
 echo "Clean dist"

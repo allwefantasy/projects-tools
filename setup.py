@@ -22,7 +22,7 @@ if os.path.exists(readme_path):
         readme_contents = fp.read().strip()
 
 setup(
-    name="projects-tools",
+    name="projects_tools",
     version=__version__,
     description="Projects Tools: A tool for managing projects",
     author="allwefantasy",
