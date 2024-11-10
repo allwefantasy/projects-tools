@@ -22,7 +22,8 @@ def cli():
 @click.argument('project_name')
 @click.option('--backend', is_flag=True, help='Create Python backend project')
 @click.option('--frontend', is_flag=True, help='Create React frontend project')
-def create(project_name, backend, frontend):
+@click.option('--enable_proxy', is_flag=True, help='Enable proxy server for frontend')
+def create(project_name, backend, frontend, enable_proxy):
     """Create a new project with specified components"""
     if not backend and not frontend:
         console.print("[red]Please specify at least one of --backend or --frontend[/red]")
