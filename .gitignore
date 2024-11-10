@@ -2,3 +2,10 @@
 .auto-coder/
 actions/
 output.txt
+web/
+logs/
+__pycache__/
+dist/
+build/
+pasted/
+*.egg-info/
