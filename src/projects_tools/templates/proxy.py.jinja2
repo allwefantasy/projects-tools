@@ -49,7 +49,7 @@ class ProxyServer:
             else:
                 return HTMLResponse(content="<h1>Welcome to Proxy Server</h1>")
                 
-        @self.app.get("/get_backend_url")
+        @self.app.get("/proxy/backend_url")
         async def get_backend_url():
             return {"backend_url": self.backend_url}
             

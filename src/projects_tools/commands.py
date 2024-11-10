@@ -54,6 +54,12 @@ def create(project_name, backend, frontend, enable_proxy):
             with open(os.path.join(project_name, "src", project_name, "version.py"), "w") as f:
                 f.write('__version__ = "0.1.0"\n')
             progress.update(task_id, completed=True)
+
+            # Create __init__.py
+            task_id = progress.add_task("Creating __init__.py...", total=None)
+            with open(os.path.join(project_name, "src", project_name, "__init__.py"), "w") as f:
+                f.write('')
+            progress.update(task_id, completed=True)
             
             # Render and write setup.py
             task_id = progress.add_task("Creating setup.py...", total=None)
@@ -63,42 +69,42 @@ def create(project_name, backend, frontend, enable_proxy):
                 f.write(setup_content)
             progress.update(task_id, completed=True)
             
-    if frontend:
-        console.print("\n[bold cyan]Setting up Frontend:[/bold cyan]")
-        
-        # Render and write Makefile
-        task_id = progress.add_task("Creating Makefile...", total=None)
-        makefile_template = env.get_template('Makefile.jinja2')
-        makefile_content = makefile_template.render(project_name=project_name)
-        with open(os.path.join(project_name, "Makefile"), "w") as f:
-            f.write(makefile_content)
-        progress.update(task_id, completed=True)
+        if frontend:
+            console.print("\n[bold cyan]Setting up Frontend:[/bold cyan]")
             
-        # Execute make ts with real-time output
-        console.print("\n[bold yellow]Executing make ts (this may take a few minutes)...[/bold yellow]")
-        try:
-            process = subprocess.Popen(
-                ['make', 'ts'],
-                cwd=project_name,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                bufsize=1,
-                universal_newlines=True
-            )
-            
-            while True:
-                output = process.stdout.readline()
-                if output == '' and process.poll() is not None:
-                    break
-                if output:
-                    console.print(output.strip())
-                    
-            return_code = process.poll()
-            if return_code != 0:
-                console.print(f"[red]make ts command failed with return code {return_code}[/red]")
+            # Render and write Makefile
+            task_id = progress.add_task("Creating Makefile...", total=None)
+            makefile_template = env.get_template('Makefile.jinja2')
+            makefile_content = makefile_template.render(project_name=project_name)
+            with open(os.path.join(project_name, "Makefile"), "w") as f:
+                f.write(makefile_content)
+            progress.update(task_id, completed=True)
                 
-        except Exception as e:
-            console.print(f"[red]Error executing make ts: {str(e)}[/red]")
+            # Execute make ts with real-time output
+            console.print("\n[bold yellow]Executing make ts (this may take a few minutes)...[/bold yellow]")
+            try:
+                process = subprocess.Popen(
+                    ['make', 'ts'],
+                    cwd=project_name,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    bufsize=1,
+                    universal_newlines=True
+                )
+                
+                while True:
+                    output = process.stdout.readline()
+                    if output == '' and process.poll() is not None:
+                        break
+                    if output:
+                        console.print(output.strip())
+                        
+                return_code = process.poll()
+                if return_code != 0:
+                    console.print(f"[red]make ts command failed with return code {return_code}[/red]")
+                    
+            except Exception as e:
+                console.print(f"[red]Error executing make ts: {str(e)}[/red]")
         
         # Render and write deploy.sh
         task_id = progress.add_task("Creating deploy.sh...", total=None)
