@@ -33,7 +33,12 @@ setup(
     package_data={
         "{{ project_name }}": ["web/**/*"],
     },
-    install_requires=install_requires,
+    entry_points={
+        'console_scripts': [
+            '{{ project_name }}.proxy = {{ project_name }}.proxy:main',
+        ],
+    },
+    install_requires=install_requires + ['fastapi', 'uvicorn', 'httpx', 'aiofiles'],
     classifiers=[        
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",

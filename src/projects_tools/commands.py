@@ -113,6 +113,15 @@ def create(project_name, backend, frontend):
         with open(os.path.join(project_name, ".gitignore"), "w") as f:
             f.write("web/\nlogs/\n__pycache__/\ndist/\nbuild/\npasted/\n")
         progress.update(task_id, completed=True)
+
+        if enable_proxy:
+            # Create proxy.py
+            task_id = progress.add_task("Creating proxy server...", total=None)
+            proxy_template = env.get_template('proxy.py.jinja2')
+            proxy_content = proxy_template.render(project_name=project_name)
+            with open(os.path.join(project_name, "src", project_name, "proxy.py"), "w") as f:
+                f.write(proxy_content)
+            progress.update(task_id, completed=True)
         
         # Render and write README.md
         task_id = progress.add_task("Creating README.md...", total=None)
