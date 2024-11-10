@@ -12,7 +12,7 @@ import aiofiles
 import pkg_resources
 
 class ProxyServer:
-    def __init__(self, backend_url: str = "http://localhost:8005"):
+    def __init__(self, backend_url: str):
         self.app = FastAPI()
         self.backend_url = backend_url.rstrip('/')
         self.setup_middleware()
