@@ -42,15 +42,15 @@ class ProxyServer:
         async def shutdown_event():
             await self.client.aclose()
             
+        {% if frontend %}    
         @self.app.get("/", response_class=HTMLResponse)
-        async def read_root():
-            {% if frontend %}
+        async def read_root():            
             if os.path.exists(self.index_html_path):
                 async with aiofiles.open(self.index_html_path, "r") as f:
                     content = await f.read()
-                return HTMLResponse(content=content)
-            {% endif %}
+                return HTMLResponse(content=content)            
             return HTMLResponse(content="<h1>Welcome to Proxy Server</h1>")
+        {% endif %}    
                 
         @self.app.get("/proxy/backend_url")
         async def get_backend_url():
