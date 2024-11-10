@@ -31,16 +31,12 @@ setup(
     entry_points={
         'console_scripts': [
             'projects = projects_tools.commands:cli',
-        ],
-        'console_scripts': [
-            'projects = projects_tools.commands:main',
-        ],
+        ]        
     },
     package_dir={"": "src"},
     packages=find_packages("src"),    
     package_data={
-        "projects_tools": [
-            "web/**/*",
+        "projects_tools": [            
             "templates/*.jinja2"
         ],
     },
