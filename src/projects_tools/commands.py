@@ -1,6 +1,6 @@
 import os
 import click
-import shutil
+import subprocess
 from jinja2 import Environment, PackageLoader
 
 # Initialize Jinja2 environment
@@ -49,8 +49,7 @@ def create(project_name, backend, frontend):
             f.write(makefile_content)
             
         # Execute make ts and capture output
-        click.echo("Executing make ts...")
-        import subprocess
+        click.echo("Executing make ts...")        
         try:
             process = subprocess.Popen(['make', 'ts'], 
                                     cwd=project_name,
