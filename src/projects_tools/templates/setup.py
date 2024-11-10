@@ -1,4 +1,5 @@
-import os
+{# setup.py.jinja2 #}
+
 from setuptools import find_packages
 from setuptools import setup
 

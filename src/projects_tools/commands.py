@@ -6,6 +6,12 @@ if __name__ == "__main__":
 import os
 import click
 import shutil
+from jinja2 import Environment, PackageLoader
+
+# Initialize Jinja2 environment
+env = Environment(
+    loader=PackageLoader('projects_tools', 'templates')
+)
 
 @click.group()
 def cli():
@@ -34,21 +40,24 @@ def create(project_name, backend, frontend):
         with open(os.path.join(project_name, "src", project_name, "version.py"), "w") as f:
             f.write('__version__ = "0.1.0"\n')
             
-        # Copy setup.py template
-        setup_template = os.path.join(os.path.dirname(__file__), "templates", "setup.py")
-        with open(setup_template, "r") as f:
-            setup_content = f.read().replace("williamtoolbox", project_name)
+        # Render and write setup.py
+        setup_template = env.get_template('setup.py.jinja2')
+        setup_content = setup_template.render(project_name=project_name)
         with open(os.path.join(project_name, "setup.py"), "w") as f:
             f.write(setup_content)
             
     if frontend:
-        # Create Makefile for frontend setup
-        makefile_template = os.path.join(os.path.dirname(__file__), "templates", "Makefile")
-        shutil.copy(makefile_template, os.path.join(project_name, "Makefile"))
+        # Render and write Makefile
+        makefile_template = env.get_template('Makefile.jinja2')
+        makefile_content = makefile_template.render(project_name=project_name)
+        with open(os.path.join(project_name, "Makefile"), "w") as f:
+            f.write(makefile_content)
         
-    # Copy deploy.sh
-    deploy_template = os.path.join(os.path.dirname(__file__), "templates", "deploy.sh")
-    shutil.copy(deploy_template, os.path.join(project_name, "deploy.sh"))
+    # Render and write deploy.sh
+    deploy_template = env.get_template('deploy.sh.jinja2')
+    deploy_content = deploy_template.render(project_name=project_name)
+    with open(os.path.join(project_name, "deploy.sh"), "w") as f:
+        f.write(deploy_content)
     os.chmod(os.path.join(project_name, "deploy.sh"), 0o755)
     
     # Create .gitignore

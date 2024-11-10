@@ -1,7 +1,8 @@
-#!/bin/bash
+{# deploy.sh.jinja2 #}
+
 
 # 项目名称
-project="williamtoolbox"
+project="{{ project_name }}"
 
 # 使用Python一行命令提取版本号
 version=$(python -c "with open('src/williamtoolbox/version.py') as f: print([line.split('=')[1].strip().strip('\"') for line in f if '__version__' in line][0])")

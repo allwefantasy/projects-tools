@@ -1,4 +1,5 @@
-FRONTEND_DIR = ./frontend
+{# Makefile.jinja2 #}
+
 
 help:
 	@echo "Available commands:"
