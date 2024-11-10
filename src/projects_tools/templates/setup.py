@@ -3,7 +3,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 folder = os.path.dirname(__file__)
-version_path = os.path.join(folder, "src", "projects_tools", "version.py")
+version_path = os.path.join(folder, "src", "williamtoolbox", "version.py")
 
 __version__ = None
 with open(version_path) as f:
@@ -22,28 +22,19 @@ if os.path.exists(readme_path):
         readme_contents = fp.read().strip()
 
 setup(
-    name="projects-tools",
+    name="williamtoolbox",
     version=__version__,
-    description="Projects Tools: A tool for managing projects",
+    description="williamtoolbox: William Toolbox",
     author="allwefantasy",
     long_description=readme_contents,
     long_description_content_type="text/markdown",
-    entry_points={
-        'console_scripts': [
-            'projects = projects_tools.commands:cli',
-        ],
-        'console_scripts': [
-            'projects = projects_tools.commands:main',
-        ],
-    },
     package_dir={"": "src"},
     packages=find_packages("src"),    
     package_data={
-        "projects_tools": ["web/**/*"],
+        "williamtoolbox": ["web/**/*"],
     },
     install_requires=install_requires,
     classifiers=[        
-        "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
