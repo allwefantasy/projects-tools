@@ -47,6 +47,22 @@ def create(project_name, backend, frontend):
         makefile_content = makefile_template.render(project_name=project_name)
         with open(os.path.join(project_name, "Makefile"), "w") as f:
             f.write(makefile_content)
+            
+        # Execute make ts and capture output
+        click.echo("Executing make ts...")
+        import subprocess
+        try:
+            process = subprocess.Popen(['make', 'ts'], 
+                                    cwd=project_name,
+                                    stdout=subprocess.PIPE, 
+                                    stderr=subprocess.PIPE)
+            stdout, stderr = process.communicate()
+            click.echo(stdout.decode())
+            if stderr:
+                click.echo("Errors:", err=True)
+                click.echo(stderr.decode(), err=True)
+        except Exception as e:
+            click.echo(f"Error executing make ts: {str(e)}", err=True)
         
     # Render and write deploy.sh
     deploy_template = env.get_template('deploy.sh.jinja2')
@@ -58,5 +74,11 @@ def create(project_name, backend, frontend):
     # Create .gitignore
     with open(os.path.join(project_name, ".gitignore"), "w") as f:
         f.write("web/\nlogs/\n__pycache__/\ndist/\nbuild/\npasted/\n")
+    
+    # Render and write README.md
+    readme_template = env.get_template('README.md.jinja2')
+    readme_content = readme_template.render(project_name=project_name)
+    with open(os.path.join(project_name, "README.md"), "w") as f:
+        f.write(readme_content)
         
     click.echo(f"Created project {project_name}")
