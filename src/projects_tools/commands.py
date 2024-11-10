@@ -73,18 +73,29 @@ def create(project_name, backend, frontend):
             f.write(makefile_content)
         progress.update(task_id, completed=True)
             
-        # Execute make ts and capture output
+        # Execute make ts with real-time output
         console.print("\n[bold yellow]Executing make ts (this may take a few minutes)...[/bold yellow]")
         try:
-            process = subprocess.Popen(['make', 'ts'], 
-                                    cwd=project_name,
-                                    stdout=subprocess.PIPE, 
-                                    stderr=subprocess.PIPE)
-            stdout, stderr = process.communicate()
-            console.print(stdout.decode())
-            if stderr:
-                console.print("[red]Errors:[/red]")
-                console.print(stderr.decode())
+            process = subprocess.Popen(
+                ['make', 'ts'],
+                cwd=project_name,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                bufsize=1,
+                universal_newlines=True
+            )
+            
+            while True:
+                output = process.stdout.readline()
+                if output == '' and process.poll() is not None:
+                    break
+                if output:
+                    console.print(output.strip())
+                    
+            return_code = process.poll()
+            if return_code != 0:
+                console.print(f"[red]make ts command failed with return code {return_code}[/red]")
+                
         except Exception as e:
             console.print(f"[red]Error executing make ts: {str(e)}[/red]")
         
