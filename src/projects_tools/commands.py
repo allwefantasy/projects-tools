@@ -21,13 +21,16 @@ def cli():
 @cli.command()
 @click.argument('project_name')
 @click.option('--backend', is_flag=True, help='Create Python backend project')
-@click.option('--frontend', is_flag=True, help='Create React frontend project')
-@click.option('--frontend-vue', is_flag=True, help='Create Vue frontend project')
+@click.option('--frontend', is_flag=True, help='Create frontend project')
+@click.option('--frontend_type', 
+              type=click.Choice(['vue', 'reactjs'], case_sensitive=False),
+              default='reactjs',
+              help='Frontend type: vue or reactjs (default: reactjs)')
 @click.option('--enable_proxy', is_flag=True, help='Enable proxy server for frontend')
-def create(project_name, backend, frontend, frontend_vue, enable_proxy):
+def create(project_name, backend, frontend, frontend_type, enable_proxy):
     """Create a new project with specified components"""
-    if not backend and not frontend and not frontend_vue:
-        console.print("[red]Please specify at least one of --backend, --frontend or --frontend-vue[/red]")
+    if not backend and not frontend:
+        console.print("[red]Please specify at least one of --backend or --frontend[/red]")
         return
 
     console.print(Panel(f"[bold blue]Creating new project: {project_name}[/bold blue]"))
@@ -82,7 +85,7 @@ def create(project_name, backend, frontend, frontend_vue, enable_proxy):
             progress.update(task_id, completed=True)
                 
             # Execute make command based on frontend type
-            make_command = 'vue' if frontend_vue else 'reactjs'
+            make_command = frontend_type
             console.print(f"\n[bold yellow]Executing make {make_command} (this may take a few minutes)...[/bold yellow]")
             try:
                 process = subprocess.Popen(
