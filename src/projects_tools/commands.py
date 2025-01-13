@@ -22,11 +22,12 @@ def cli():
 @click.argument('project_name')
 @click.option('--backend', is_flag=True, help='Create Python backend project')
 @click.option('--frontend', is_flag=True, help='Create React frontend project')
+@click.option('--frontend-vue', is_flag=True, help='Create Vue frontend project')
 @click.option('--enable_proxy', is_flag=True, help='Enable proxy server for frontend')
-def create(project_name, backend, frontend, enable_proxy):
+def create(project_name, backend, frontend, frontend_vue, enable_proxy):
     """Create a new project with specified components"""
-    if not backend and not frontend:
-        console.print("[red]Please specify at least one of --backend or --frontend[/red]")
+    if not backend and not frontend and not frontend_vue:
+        console.print("[red]Please specify at least one of --backend, --frontend or --frontend-vue[/red]")
         return
 
     console.print(Panel(f"[bold blue]Creating new project: {project_name}[/bold blue]"))
@@ -80,11 +81,12 @@ def create(project_name, backend, frontend, enable_proxy):
                 f.write(makefile_content)
             progress.update(task_id, completed=True)
                 
-            # Execute make ts with real-time output
-            console.print("\n[bold yellow]Executing make ts (this may take a few minutes)...[/bold yellow]")
+            # Execute make command based on frontend type
+            make_command = 'vue' if frontend_vue else 'ts'
+            console.print(f"\n[bold yellow]Executing make {make_command} (this may take a few minutes)...[/bold yellow]")
             try:
                 process = subprocess.Popen(
-                    ['make', 'ts'],
+                    ['make', make_command],
                     cwd=project_name,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
