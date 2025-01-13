@@ -82,7 +82,7 @@ def create(project_name, backend, frontend, frontend_vue, enable_proxy):
             progress.update(task_id, completed=True)
                 
             # Execute make command based on frontend type
-            make_command = 'vue' if frontend_vue else 'ts'
+            make_command = 'vue' if frontend_vue else 'reactjs'
             console.print(f"\n[bold yellow]Executing make {make_command} (this may take a few minutes)...[/bold yellow]")
             try:
                 process = subprocess.Popen(

@@ -34,7 +34,7 @@ configure:
 	@echo "  plugins: []," >> $(FRONTEND_DIR)/tailwind.config.js
 	@echo "}" >> $(FRONTEND_DIR)/tailwind.config.js
 
-ts: create_project install_dependencies init_tailwind configure
+reactjs: create_project install_dependencies init_tailwind configure
 
 create_vue_project:
 	@echo "Creating Vue project with Vite..."
