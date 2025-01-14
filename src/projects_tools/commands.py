@@ -43,6 +43,7 @@ def create(project_name, backend, frontend, frontend_type, enable_proxy):
         # Create project directory
         progress.add_task("Creating project directory...", total=None)
         os.makedirs(project_name, exist_ok=True)
+        python_package_name = project_name.replace('-', '_')
         
         if backend:
             console.print("\n[bold cyan]Setting up Python backend:[/bold cyan]")
@@ -68,8 +69,7 @@ def create(project_name, backend, frontend, frontend_type, enable_proxy):
             # Render and write setup.py
             task_id = progress.add_task("Creating setup.py...", total=None)
             setup_template = env.get_template('setup.py.jinja2')
-            # Replace hyphens with underscores for Python package name
-            python_package_name = project_name.replace('-', '_')
+            # Replace hyphens with underscores for Python package name            
             setup_content = setup_template.render(project_name=project_name, python_package_name=python_package_name)
             with open(os.path.join(project_name, "setup.py"), "w") as f:
                 f.write(setup_content)
@@ -81,7 +81,7 @@ def create(project_name, backend, frontend, frontend_type, enable_proxy):
             # Render and write Makefile
             task_id = progress.add_task("Creating Makefile...", total=None)
             makefile_template = env.get_template('Makefile.jinja2')
-            makefile_content = makefile_template.render(project_name=project_name)
+            makefile_content = makefile_template.render(project_name=project_name, python_package_name=python_package_name)
             with open(os.path.join(project_name, "Makefile"), "w") as f:
                 f.write(makefile_content)
             progress.update(task_id, completed=True)
@@ -116,7 +116,7 @@ def create(project_name, backend, frontend, frontend_type, enable_proxy):
         # Render and write deploy.sh
         task_id = progress.add_task("Creating deploy.sh...", total=None)
         deploy_template = env.get_template('deploy.sh.jinja2')
-        deploy_content = deploy_template.render(project_name=project_name)
+        deploy_content = deploy_template.render(project_name=project_name, python_package_name=python_package_name)
         with open(os.path.join(project_name, "deploy.sh"), "w") as f:
             f.write(deploy_content)
         os.chmod(os.path.join(project_name, "deploy.sh"), 0o755)
@@ -132,7 +132,7 @@ def create(project_name, backend, frontend, frontend_type, enable_proxy):
             # Create proxy.py
             task_id = progress.add_task("Creating proxy server...", total=None)
             proxy_template = env.get_template('proxy.py.jinja2')
-            proxy_content = proxy_template.render(project_name=project_name, frontend=frontend)
+            proxy_content = proxy_template.render(project_name=project_name, frontend=frontend, python_package_name=python_package_name)
             with open(os.path.join(project_name, "src", project_name, "proxy.py"), "w") as f:
                 f.write(proxy_content)
             progress.update(task_id, completed=True)

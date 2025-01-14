@@ -67,10 +67,11 @@ vue: create_vue_project install_vue_dependencies init_vue_tailwind configure_vue
 
 release:
 	cd frontend && npm install && npm run build
+	cd frontend && mkdir -p build
 	tar -czf web.static.tar.gz -C frontend/build .
-	rm -rf src/{{ project_name }}/web && mkdir -p src/{{ project_name }}/web	
-	mv web.static.tar.gz src/{{ project_name }}/web/	
-	cd src/{{ project_name }}/web/ && tar -xzf web.static.tar.gz && rm web.static.tar.gz
+	rm -rf src/{{ python_package_name }}/web && mkdir -p src/{{ python_package_name }}/web	
+	mv web.static.tar.gz src/{{ python_package_name }}/web/	
+	cd src/{{ python_package_name }}/web/ && tar -xzf web.static.tar.gz && rm web.static.tar.gz
 	./deploy.sh && pip install -e .
 
 clean:
