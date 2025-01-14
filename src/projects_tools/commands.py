@@ -68,7 +68,9 @@ def create(project_name, backend, frontend, frontend_type, enable_proxy):
             # Render and write setup.py
             task_id = progress.add_task("Creating setup.py...", total=None)
             setup_template = env.get_template('setup.py.jinja2')
-            setup_content = setup_template.render(project_name=project_name)
+            # Replace hyphens with underscores for Python package name
+            python_package_name = project_name.replace('-', '_')
+            setup_content = setup_template.render(project_name=project_name, python_package_name=python_package_name)
             with open(os.path.join(project_name, "setup.py"), "w") as f:
                 f.write(setup_content)
             progress.update(task_id, completed=True)

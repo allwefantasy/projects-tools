@@ -45,6 +45,3 @@ release: ## Build and package web assets
 	mv web.static.tar.gz src/projects_tools/web/	
 	cd src/projects_tools/web/ && tar -xzf web.static.tar.gz && rm web.static.tar.gz
 	./deploy.sh && pip install -e .
-
-clean:
-	rm -rf frontend
