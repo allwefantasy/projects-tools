@@ -76,6 +76,3 @@ release:
 	mv web.static.tar.gz src/{{ python_package_name }}/web/	
 	cd src/{{ python_package_name }}/web/ && tar -xzf web.static.tar.gz && rm web.static.tar.gz
 	./deploy.sh && pip install -e .
-
-clean:
-	rm -rf frontend
