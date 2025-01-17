@@ -86,32 +86,18 @@ def create(project_name, backend, frontend, frontend_type, enable_proxy):
                 f.write(makefile_content)
             progress.update(task_id, completed=True)
                 
-            # Execute make command based on frontend type
-            make_command = frontend_type
-            console.print(f"\n[bold yellow]Executing make {make_command} (this may take a few minutes)...[/bold yellow]")
-            try:
-                process = subprocess.Popen(
-                    ['make', make_command],
-                    cwd=project_name,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.STDOUT,
-                    bufsize=1,
-                    universal_newlines=True
-                )
-                
-                while True:
-                    output = process.stdout.readline()
-                    if output == '' and process.poll() is not None:
-                        break
-                    if output:
-                        console.print(output.strip())
-                        
-                return_code = process.poll()
-                if return_code != 0:
-                    console.print(f"[red]make ts command failed with return code {return_code}[/red]")
-                    
-            except Exception as e:
-                console.print(f"[red]Error executing make ts: {str(e)}[/red]")
+            # Execute frontend setup based on type
+            from pathlib import Path
+            project_path = Path(project_name)
+            
+            if frontend_type == 'vue':
+                from .vue_tasks import create_vue_project                 
+                if not create_vue_project(project_name, project_path):
+                    return
+            else:
+                from .react_tasks import create_react_project
+                if not create_react_project(project_name, project_path):
+                    return
         
         # Render and write deploy.sh
         task_id = progress.add_task("Creating deploy.sh...", total=None)
