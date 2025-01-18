@@ -78,12 +78,7 @@ project_name/
 
 项目创建后，可以使用以下命令进行构建和发布：
 
-1. 构建前端：
-```bash
-make ts
-```
-
-2. 发布项目：
+1. 发布项目：
 ```bash
 make release
 ```
@@ -101,7 +96,7 @@ make release
 ```bash
 git clone https://github.com/yourusername/projects-tools.git
 cd projects-tools
-pip install -e .[dev]
+pip install -e .
 ```
 
 ### 许可证
