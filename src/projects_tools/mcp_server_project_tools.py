@@ -32,7 +32,6 @@ class ProjectsCreatorMCP:
                     inputSchema={
                         "type": "object",
                         "properties": {
-                            "project_name": {"type": "string"},
                             "backend": {"type": "boolean"},
                             "frontend": {"type": "boolean"},
                             "frontend_type": {
@@ -40,8 +39,7 @@ class ProjectsCreatorMCP:
                                 "enum": ["vue", "reactjs"]
                             },
                             "enable_proxy": {"type": "boolean"}
-                        },
-                        "required": ["project_name"]
+                        }
                     }
                 )
             ]
@@ -54,7 +52,6 @@ class ProjectsCreatorMCP:
                 raise ValueError("Missing arguments")
 
             if name == "create-project":
-                project_name = arguments.get("project_name")
                 backend = arguments.get("backend", False)
                 frontend = arguments.get("frontend", False)
                 frontend_type = arguments.get("frontend_type", "reactjs")
@@ -66,7 +63,8 @@ class ProjectsCreatorMCP:
                         text="Please specify at least one of backend or frontend"
                     )]
 
-                console.print(Panel(f"[bold blue]Creating new project: {project_name}[/bold blue]"))
+                project_name = os.path.basename(os.getcwd())
+                console.print(Panel(f"[bold blue]Creating new project in current directory: {project_name}[/bold blue]"))
 
                 with Progress(
                     SpinnerColumn(),
