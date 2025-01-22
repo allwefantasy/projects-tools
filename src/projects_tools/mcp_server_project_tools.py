@@ -20,7 +20,7 @@ console = Console()
 
 class ProjectsCreatorMCP:
     def __init__(self):
-        self.server = Server("projects_creator")
+        self.server = Server("mcp_server_project_tools")
 
     async def setup_server(self):
         @self.server.list_tools()
@@ -188,7 +188,7 @@ class ProjectsCreatorMCP:
                 read_stream,
                 write_stream,
                 InitializationOptions(
-                    server_name="projects_creator",
+                    server_name="mcp_server_project_tools",
                     server_version="0.1.0",
                     capabilities=self.server.get_capabilities(
                         notification_options=NotificationOptions(),
