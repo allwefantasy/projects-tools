@@ -169,8 +169,7 @@ def create(project_name, backend, frontend, frontend_type, enable_proxy):
         f"[success]✨ 项目 [highlight]{project_name}[/] 创建完成！\n"
         "👉 下一步操作建议:\n"
         f"  cd {project_name}\n"
-        "  git init\n"
-        "  pip install -e .",
+        "  auto-coder.chat",
         title="创建成功",
         style="success"
     ))
