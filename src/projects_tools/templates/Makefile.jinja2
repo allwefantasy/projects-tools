@@ -32,6 +32,12 @@ configure:
 	@echo "  }," >> $(FRONTEND_DIR)/tailwind.config.js
 	@echo "  plugins: []," >> $(FRONTEND_DIR)/tailwind.config.js
 	@echo "}" >> $(FRONTEND_DIR)/tailwind.config.js
+	@echo "module.exports = {" > $(FRONTEND_DIR)/postcss.config.js
+	@echo "  plugins: [" >> $(FRONTEND_DIR)/postcss.config.js
+	@echo "    require('tailwindcss')," >> $(FRONTEND_DIR)/postcss.config.js
+	@echo "    require('autoprefixer')," >> $(FRONTEND_DIR)/postcss.config.js
+	@echo "  ]," >> $(FRONTEND_DIR)/postcss.config.js
+	@echo "};" >> $(FRONTEND_DIR)/postcss.config.js
 
 reactjs: create_project install_dependencies init_tailwind configure
 
@@ -59,6 +65,12 @@ configure_vue_tailwind:
 	@echo "  }," >> $(FRONTEND_DIR)/tailwind.config.js
 	@echo "  plugins: []," >> $(FRONTEND_DIR)/tailwind.config.js
 	@echo "}" >> $(FRONTEND_DIR)/tailwind.config.js
+	@echo "module.exports = {" > $(FRONTEND_DIR)/postcss.config.js
+	@echo "  plugins: [" >> $(FRONTEND_DIR)/postcss.config.js
+	@echo "    require('tailwindcss')," >> $(FRONTEND_DIR)/postcss.config.js
+	@echo "    require('autoprefixer')," >> $(FRONTEND_DIR)/postcss.config.js
+	@echo "  ]," >> $(FRONTEND_DIR)/postcss.config.js
+	@echo "};" >> $(FRONTEND_DIR)/postcss.config.js
 
 vue: create_vue_project install_vue_dependencies init_vue_tailwind configure_vue_tailwind
 
