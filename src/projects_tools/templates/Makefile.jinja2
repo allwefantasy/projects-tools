@@ -20,12 +20,13 @@ install_dependencies:
 	cd $(FRONTEND_DIR) && npm install axios react-router-dom
 	cd $(FRONTEND_DIR) && npm install --save-dev @types/react-router-dom
 
-init_tailwind:	
+init_tailwind:
 	@echo "Modifying vite.config.ts..."
-	@sed -i '' '2i\
-import tailwindcss from '\''@tailwindcss/vite'\''\
-' $(FRONTEND_DIR)/vite.config.ts
-	@sed -i '' 's/react()/react(), tailwindcss()/' $(FRONTEND_DIR)/vite.config.ts
+	@echo "import tailwindcss from '@tailwindcss/vite';" > temp.ts
+	@cat $(FRONTEND_DIR)/vite.config.ts >> temp.ts
+	@mv temp.ts $(FRONTEND_DIR)/vite.config.ts
+	@sed -i.bak 's/react()/react(), tailwindcss()/' $(FRONTEND_DIR)/vite.config.ts
+	@rm -f $(FRONTEND_DIR)/vite.config.ts.bak
 
 configure:
 	@echo '@import "tailwindcss";' | cat - $(FRONTEND_DIR)/src/index.css > temp && mv temp $(FRONTEND_DIR)/src/index.css	
@@ -44,12 +45,13 @@ install_vue_dependencies:
 	cd $(FRONTEND_DIR) && npm install axios vue-router@4
 	cd $(FRONTEND_DIR) && npm install --save-dev @types/vue-router
 
-init_vue_tailwind:		
+init_vue_tailwind:
 	@echo "Modifying vite.config.ts..."
-	@sed -i '' '2i\
-import tailwindcss from '\''@tailwindcss/vite'\''\
-' $(FRONTEND_DIR)/vite.config.ts
-	@sed -i '' 's/vue()/vue(), tailwindcss()/' $(FRONTEND_DIR)/vite.config.ts
+	@echo "import tailwindcss from '@tailwindcss/vite';" > temp.ts
+	@cat $(FRONTEND_DIR)/vite.config.ts >> temp.ts
+	@mv temp.ts $(FRONTEND_DIR)/vite.config.ts
+	@sed -i.bak 's/vue()/vue(), tailwindcss()/' $(FRONTEND_DIR)/vite.config.ts
+	@rm -f $(FRONTEND_DIR)/vite.config.ts.bak
 
 configure_vue_tailwind:
 	@echo "Configuring Tailwind for Vue..."
