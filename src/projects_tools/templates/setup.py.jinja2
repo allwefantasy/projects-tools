@@ -35,7 +35,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            '{{ python_package_name }}.proxy = {{ python_package_name }}.proxy:main',
+            '{{ python_package_name }}.serve = {{ python_package_name }}.proxy:main',
         ],
     },
     install_requires=install_requires + ['fastapi', 'uvicorn', 'httpx', 'aiofiles'],
