@@ -5,13 +5,37 @@ from jinja2 import Environment, PackageLoader
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.status import Status
+from rich.rule import Rule
+from rich.syntax import Syntax
+from rich.table import Table
+from rich.theme import Theme
 from rich import print as rprint
+
+# 定义自定义主题
+custom_theme = Theme({
+    "success": "bold green",
+    "warning": "bold yellow",
+    "error": "bold red",
+    "info": "bold cyan",
+    "highlight": "bold magenta",
+    "section": "bold blue reverse",
+    "command": "bold yellow"
+})
 
 # Initialize Jinja2 environment and rich console
 env = Environment(
     loader=PackageLoader('projects_tools', 'templates')
 )
-console = Console()
+console = Console(theme=custom_theme)
+
+def print_section(title: str):
+    """打印带样式的章节标题"""
+    console.print(Rule(title, style="section"))
+
+def print_command(cmd: str):
+    """高亮显示执行的命令"""
+    console.print(f"$ [command]{cmd}[/]", style="highlight")
 
 @click.group()
 def cli():
@@ -30,23 +54,36 @@ def cli():
 def create(project_name, backend, frontend, frontend_type, enable_proxy):
     """Create a new project with specified components"""
     if not backend and not frontend:
-        console.print("[red]Please specify at least one of --backend or --frontend[/red]")
+        console.print("[error]✘ 必须指定至少一个组件 (--backend 或 --frontend)", style="error")
         return
 
-    console.print(Panel(f"[bold blue]Creating new project: {project_name}[/bold blue]"))
+    # 项目创建标题
+    console.print(Panel(
+        f"[success]🚀 创建新项目: [highlight]{project_name}[/]",
+        expand=False,
+        style="success"
+    ))
 
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
         console=console
     ) as progress:
-        # Create project directory
-        progress.add_task("Creating project directory...", total=None)
-        os.makedirs(project_name, exist_ok=True)
+        # 创建项目目录
+        with Status("[info]⚙ 初始化项目结构...", console=console) as status:
+            os.makedirs(project_name, exist_ok=True)
+            status.update("[success]✅ 项目目录创建完成", spinner="clock")
+
         python_package_name = project_name.replace('-', '_')
         
         if backend:
-            console.print("\n[bold cyan]Setting up Python backend:[/bold cyan]")
+            print_section("Python 后端设置")
+            
+            backend_table = Table.grid(padding=(0, 2))
+            backend_table.add_row("📦 包结构", Syntax(f"{project_name}/src/{project_name}", "bash"))
+            backend_table.add_row("📜 元数据", Syntax("version.py / __init__.py / setup.py", "python"))
+            backend_table.add_row("🚀 入口点", Syntax("console_scripts", "ini"))
+            console.print(backend_table)
             
             # Create Python project structure
             task_id = progress.add_task("Creating Python project structure...", total=None)
@@ -76,7 +113,13 @@ def create(project_name, backend, frontend, frontend_type, enable_proxy):
             progress.update(task_id, completed=True)
             
         if frontend:
-            console.print("\n[bold cyan]Setting up Frontend:[/bold cyan]")
+            print_section(f"前端设置 ({frontend_type.upper()})")
+            
+            frontend_table = Table.grid(padding=(0, 2))
+            frontend_table.add_row("🛠️ 构建工具", "Vite")
+            frontend_table.add_row("🎨 UI 框架", "Tailwind CSS")
+            frontend_table.add_row("📦 依赖管理", "npm")
+            console.print(frontend_table)
             
             # Render and write Makefile
             task_id = progress.add_task("Creating Makefile...", total=None)
@@ -136,4 +179,21 @@ def create(project_name, backend, frontend, frontend_type, enable_proxy):
             f.write(readme_content)
         progress.update(task_id, completed=True)
         
-    console.print(Panel(f"[bold green]Successfully created project: {project_name}[/bold green]"))
+    # 部署配置
+    print_section("部署配置")
+    deploy_table = Table(show_header=False, box=None)
+    deploy_table.add_row("📦 打包脚本", Syntax("./deploy.sh", "bash"))
+    deploy_table.add_row("🔧 执行权限", "chmod 755 deploy.sh")
+    deploy_table.add_row("🚀 发布命令", Syntax("pip install -e .", "bash"))
+    console.print(deploy_table)
+
+    # 最终状态
+    console.print(Panel(
+        f"[success]✨ 项目 [highlight]{project_name}[/] 创建完成！\n"
+        "👉 下一步操作建议:\n"
+        f"  cd {project_name}\n"
+        "  git init\n"
+        "  pip install -e .",
+        title="创建成功",
+        style="success"
+    ))
