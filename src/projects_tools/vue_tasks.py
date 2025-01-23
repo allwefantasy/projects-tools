@@ -1,6 +1,8 @@
 import subprocess
 from .utils import console, print_section, print_command
 from jinja2 import Environment, PackageLoader
+from rich.panel import Panel
+from rich.table import Table
 
 # Initialize Jinja2 environment and rich console
 env = Environment(
@@ -29,11 +31,13 @@ def create_vue_project(project_name, project_path):
             universal_newlines=True
         )
         
+        task_log = []
         while True:
             output = process.stdout.readline()
             if output == '' and process.poll() is not None:
                 break
             if output:
+                task_log.append(output.strip())
                 console.print(output.strip())
                 
         return_code = process.poll()

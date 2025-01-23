@@ -1,7 +1,12 @@
 import os
 import click
-import subprocess
 from jinja2 import Environment, PackageLoader
+from rich.panel import Panel
+from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.status import Status
+from rich.syntax import Syntax
+from rich.table import Table
+from rich import print as rprint
 from .utils import console, print_section, print_command
 
 # Initialize Jinja2 environment and rich console

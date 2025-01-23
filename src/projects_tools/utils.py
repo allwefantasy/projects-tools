@@ -1,3 +1,19 @@
+from rich.console import Console
+from rich.rule import Rule
+from rich.theme import Theme
+
+
+# 定义自定义主题
+custom_theme = Theme({
+    "success": "bold green",
+    "warning": "bold yellow",
+    "error": "bold red",
+    "info": "bold cyan",
+    "highlight": "bold magenta",
+    "section": "bold blue reverse",
+    "command": "bold yellow"
+})
+
 console = Console(theme=custom_theme)
 
 def print_section(title: str):
