@@ -59,6 +59,21 @@ project_name/
 └── .gitignore         # Git忽略文件
 ```
 
+### 启动前端项目
+
+```
+cd frontend
+npm run dev
+```
+
+### 启动后端项目
+
+```
+make build_static
+pip install -e .
+<project_name>.serve
+```
+
 ### 功能特性
 
 - 自动创建Python项目结构
