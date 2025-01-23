@@ -15,12 +15,12 @@ create_project:
 	cd $(FRONTEND_DIR) && rm -rf .git
 
 install_dependencies:
+	cd $(FRONTEND_DIR) && npm install
 	cd $(FRONTEND_DIR) && npm install tailwindcss @tailwindcss/vite
 	cd $(FRONTEND_DIR) && npm install axios react-router-dom
 	cd $(FRONTEND_DIR) && npm install --save-dev @types/react-router-dom
 
-init_tailwind:
-	cd $(FRONTEND_DIR) && npx tailwindcss init -p
+init_tailwind:	
 	@echo "Modifying vite.config.ts..."
 	@sed -i '' '2i\
 import tailwindcss from '\''@tailwindcss/vite'\''\
@@ -28,15 +28,8 @@ import tailwindcss from '\''@tailwindcss/vite'\''\
 	@sed -i '' 's/react()/react(), tailwindcss()/' $(FRONTEND_DIR)/vite.config.ts
 
 configure:
-	@echo "@import 'tailwindcss/base';\n@import 'tailwindcss/components';\n@import 'tailwindcss/utilities';" | cat - $(FRONTEND_DIR)/src/index.css > temp && mv temp $(FRONTEND_DIR)/src/index.css
-	@echo "/** @type {import('tailwindcss').Config} */" > $(FRONTEND_DIR)/tailwind.config.js
-	@echo "module.exports = {" >> $(FRONTEND_DIR)/tailwind.config.js
-	@echo "  content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html']," >> $(FRONTEND_DIR)/tailwind.config.js
-	@echo "  theme: {" >> $(FRONTEND_DIR)/tailwind.config.js
-	@echo "    extend: {}," >> $(FRONTEND_DIR)/tailwind.config.js
-	@echo "  }," >> $(FRONTEND_DIR)/tailwind.config.js
-	@echo "  plugins: []," >> $(FRONTEND_DIR)/tailwind.config.js
-	@echo "}" >> $(FRONTEND_DIR)/tailwind.config.js
+	@echo "@import "tailwindcss";" | cat - $(FRONTEND_DIR)/src/index.css > temp && mv temp $(FRONTEND_DIR)/src/index.css	
+	
 
 reactjs: create_project install_dependencies init_tailwind configure
 
@@ -46,24 +39,21 @@ create_vue_project:
 	cd $(FRONTEND_DIR) && rm -rf .git
 
 install_vue_dependencies:
-	cd $(FRONTEND_DIR) && npm install -D tailwindcss postcss autoprefixer
+	cd $(FRONTEND_DIR) && npm install
+	cd $(FRONTEND_DIR) && npm install tailwindcss @tailwindcss/vite
 	cd $(FRONTEND_DIR) && npm install axios vue-router@4
 	cd $(FRONTEND_DIR) && npm install --save-dev @types/vue-router
 
-init_vue_tailwind:
-	cd $(FRONTEND_DIR) && npx tailwindcss init -p
+init_vue_tailwind:		
+	@echo "Modifying vite.config.ts..."
+	@sed -i '' '2i\
+import tailwindcss from '\''@tailwindcss/vite'\''\
+' $(FRONTEND_DIR)/vite.config.ts
+	@sed -i '' 's/react()/react(), tailwindcss()/' $(FRONTEND_DIR)/vite.config.ts
 
 configure_vue_tailwind:
 	@echo "Configuring Tailwind for Vue..."
-	@echo "@tailwind base;\n@tailwind components;\n@tailwind utilities;" | cat - $(FRONTEND_DIR)/src/assets/main.css > temp && mv temp $(FRONTEND_DIR)/src/assets/main.css
-	@echo "/** @type {import('tailwindcss').Config} */" > $(FRONTEND_DIR)/tailwind.config.js
-	@echo "module.exports = {" >> $(FRONTEND_DIR)/tailwind.config.js
-	@echo "  content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}']," >> $(FRONTEND_DIR)/tailwind.config.js
-	@echo "  theme: {" >> $(FRONTEND_DIR)/tailwind.config.js
-	@echo "    extend: {}," >> $(FRONTEND_DIR)/tailwind.config.js
-	@echo "  }," >> $(FRONTEND_DIR)/tailwind.config.js
-	@echo "  plugins: []," >> $(FRONTEND_DIR)/tailwind.config.js
-	@echo "}" >> $(FRONTEND_DIR)/tailwind.config.js
+	@echo "@import "tailwindcss";" | cat - $(FRONTEND_DIR)/src/assets/main.css > temp && mv temp $(FRONTEND_DIR)/src/assets/main.css	
 
 vue: create_vue_project install_vue_dependencies init_vue_tailwind configure_vue_tailwind
 
