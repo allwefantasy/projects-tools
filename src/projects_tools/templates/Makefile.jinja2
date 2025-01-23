@@ -21,6 +21,11 @@ install_dependencies:
 
 init_tailwind:
 	cd $(FRONTEND_DIR) && npx tailwindcss init -p
+	@echo "Modifying vite.config.ts..."
+	@sed -i '' '2i\
+import tailwindcss from '\''@tailwindcss/vite'\''\
+' $(FRONTEND_DIR)/vite.config.ts
+	@sed -i '' 's/react()/react(), tailwindcss()/' $(FRONTEND_DIR)/vite.config.ts
 
 configure:
 	@echo "@import 'tailwindcss/base';\n@import 'tailwindcss/components';\n@import 'tailwindcss/utilities';" | cat - $(FRONTEND_DIR)/src/index.css > temp && mv temp $(FRONTEND_DIR)/src/index.css
