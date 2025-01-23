@@ -46,10 +46,10 @@ def create(project_name, backend, frontend, frontend_type, enable_proxy):
         TextColumn("[progress.description]{task.description}"),
         console=console
     ) as progress:
-        # 创建项目目录
-        with Status("[info]⚙ 初始化项目结构...", console=console) as status:
-            os.makedirs(project_name, exist_ok=True)
-            status.update("[success]✅ 项目目录创建完成", spinner="clock")
+        # 修改点：使用 progress 的 task 替代 Status
+        init_task = progress.add_task("[info]⚙ 初始化项目结构...", total=1)
+        os.makedirs(project_name, exist_ok=True)
+        progress.update(init_task, description="[success]✅ 项目目录创建完成", completed=1)
 
         python_package_name = project_name.replace('-', '_')
         
