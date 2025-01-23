@@ -15,7 +15,7 @@ create_project:
 	cd $(FRONTEND_DIR) && rm -rf .git
 
 install_dependencies:
-	cd $(FRONTEND_DIR) && npm install -D tailwindcss postcss autoprefixer
+	cd $(FRONTEND_DIR) && npm install tailwindcss @tailwindcss/vite
 	cd $(FRONTEND_DIR) && npm install axios react-router-dom
 	cd $(FRONTEND_DIR) && npm install --save-dev @types/react-router-dom
 
