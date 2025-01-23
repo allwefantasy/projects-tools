@@ -1,13 +1,11 @@
 import subprocess
-from rich.console import Console
-from rich.panel import Panel
+from .utils import console, print_section, print_command
 from jinja2 import Environment, PackageLoader
 
 # Initialize Jinja2 environment and rich console
 env = Environment(
     loader=PackageLoader('projects_tools', 'templates')
 )
-console = Console()
 
 def create_react_project(project_name, project_path):
     """Create React project with TypeScript"""

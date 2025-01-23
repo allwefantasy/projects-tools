@@ -2,40 +2,12 @@ import os
 import click
 import subprocess
 from jinja2 import Environment, PackageLoader
-from rich.console import Console
-from rich.panel import Panel
-from rich.progress import Progress, SpinnerColumn, TextColumn
-from rich.status import Status
-from rich.rule import Rule
-from rich.syntax import Syntax
-from rich.table import Table
-from rich.theme import Theme
-from rich import print as rprint
-
-# 定义自定义主题
-custom_theme = Theme({
-    "success": "bold green",
-    "warning": "bold yellow",
-    "error": "bold red",
-    "info": "bold cyan",
-    "highlight": "bold magenta",
-    "section": "bold blue reverse",
-    "command": "bold yellow"
-})
+from .utils import console, print_section, print_command
 
 # Initialize Jinja2 environment and rich console
 env = Environment(
     loader=PackageLoader('projects_tools', 'templates')
 )
-console = Console(theme=custom_theme)
-
-def print_section(title: str):
-    """打印带样式的章节标题"""
-    console.print(Rule(title, style="section"))
-
-def print_command(cmd: str):
-    """高亮显示执行的命令"""
-    console.print(f"$ [command]{cmd}[/]", style="highlight")
 
 @click.group()
 def cli():
