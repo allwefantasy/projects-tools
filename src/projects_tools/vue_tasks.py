@@ -12,16 +12,20 @@ env = Environment(
 def create_vue_project(project_name, project_path):
     """Create Vue project with Vite"""
     try:
-        with console.status("[info]🛠 配置 Vue 项目...") as status:
-            # 生成 Makefile
-            status.update("[info]📄 生成 Makefile...")
-            makefile_template = env.get_template('Makefile.jinja2')
-            makefile_content = makefile_template.render(project_name=project_name, python_package_name=project_name.replace('-', '_'))
-            with open(project_path / "Makefile", "w") as f:
-                f.write(makefile_content)
-            
-            status.update("[info]📦 安装前端依赖...")
-            print_command("npm create vite@latest")
+        # 移除 Status 上下文管理器，改用普通打印
+        console.print("[info]🛠 配置 Vue 项目...[/]")
+
+        # 生成 Makefile
+        console.print("[info]📄 生成 Makefile...[/]")
+        makefile_template = env.get_template('Makefile.jinja2')
+        makefile_content = makefile_template.render(project_name=project_name, python_package_name=project_name.replace('-', '_'))
+        with open(project_path / "Makefile", "w") as f:
+            f.write(makefile_content)
+
+        # 安装前端依赖（保持与 react_tasks.py 一致）
+        console.print(f"\n[bold yellow]Executing make vue (this may take a few minutes)...[/bold yellow]")
+        print_command("npm create vite@latest")
+        
         process = subprocess.Popen(
             ['make', 'vue'],
             cwd=project_path,
@@ -30,16 +34,18 @@ def create_vue_project(project_name, project_path):
             bufsize=1,
             universal_newlines=True
         )
-        
+
+        # 实时输出日志（与 react_tasks.py 保持同步）
         task_log = []
         while True:
             output = process.stdout.readline()
             if output == '' and process.poll() is not None:
                 break
             if output:
-                task_log.append(output.strip())
-                console.print(output.strip())
-                
+                cleaned_output = output.strip()
+                task_log.append(cleaned_output)
+                console.print(cleaned_output)  # 直接输出，不使用 Status
+
         return_code = process.poll()
         if return_code != 0:
             error_table = Table.grid(padding=(0, 1))
@@ -50,7 +56,8 @@ def create_vue_project(project_name, project_path):
                 error_table.add_row(f"  [dim]{line}[/]")
             console.print(error_table)
             return False
-                
+
+        # 成功提示保持不变
         success_panel = Panel(
             f"[success]✅ Vue 项目初始化完成\n"
             f"📁 目录结构: [highlight]{project_path}/frontend[/]\n"
