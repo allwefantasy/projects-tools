@@ -1,0 +1,53 @@
+# -*- mode: python ; coding: utf-8 -*-
+
+block_cipher = None
+
+a = Analysis(
+    ['main.py'],
+    pathex=[],
+    binaries=[],
+    datas=[],
+    hiddenimports=[
+        'flask', 
+        'flask_cors',
+        'flask.json',
+        'werkzeug',
+        'werkzeug.routing',
+        'werkzeug.http',
+        'werkzeug.datastructures',
+        'werkzeug.local',
+        'jinja2',
+        'jinja2.ext',
+        'itsdangerous',
+        'click'
+    ],  # 添加更多隐式导入
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=[],
+    win_no_prefer_redirects=False,
+    win_private_assemblies=False,
+    cipher=block_cipher,
+    noarchive=False,
+    collect_all=['flask', 'flask_cors']  # 自动收集指定包的所有依赖
+)
+
+pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+
+exe = EXE(
+    pyz,
+    a.scripts,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    [],
+    name='main',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console={{ debug_console }},  # 设置为True可以在调试时查看输出
+    icon='',
+) 

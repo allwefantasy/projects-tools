@@ -37,7 +37,8 @@ setup(
     packages=find_packages("src"),    
     package_data={
         "projects_tools": [            
-            "templates/*.jinja2"
+            "templates/*.jinja2",
+            "templates/electron_python/*"
         ],
     },
     install_requires=install_requires + ['jinja2'],

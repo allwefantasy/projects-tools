@@ -117,3 +117,139 @@ pip install -e .
 ### 许可证
 
 MIT License
+
+## Electron+Python项目创建工具
+
+使用以下命令创建一个集成Electron和Python的跨平台桌面应用项目：
+
+```bash
+projects electron-python 项目名称 [选项]
+```
+
+#### 选项
+
+- `--output-dir`: 指定输出目录，默认为当前目录
+- `--debug-mode`: 启用调试模式，打包时会开启控制台窗口，方便查看错误信息
+- `--author-name`: 设置项目作者姓名（用于打包信息）
+- `--author-email`: 设置项目作者邮箱（用于打包信息）
+
+#### 示例
+
+1. 创建基本的Electron+Python项目：
+```bash
+projects electron-python my-electron-app
+```
+
+2. 创建启用调试模式的项目：
+```bash
+projects electron-python my-electron-app --debug-mode
+```
+
+3. 创建包含作者信息的项目：
+```bash
+projects electron-python my-electron-app --author-name "Your Name" --author-email "your.email@example.com"
+```
+
+这将创建一个具有以下特点的项目：
+
+1. Electron前端界面
+2. Python后端服务（使用Flask）
+3. 进程间通信机制
+4. 跨平台打包配置（Windows, macOS, Linux）
+5. 健壮的依赖管理和错误处理
+
+### 项目结构
+
+```
+项目名称/
+├── package.json           # Electron应用配置
+├── main.js                # Electron主进程
+├── preload.js             # Electron预加载脚本
+├── renderer/              # Electron渲染进程文件
+│   ├── index.html
+│   ├── index.js
+│   └── styles.css
+├── python/                # Python引擎代码
+│   ├── main.py            # Python主入口
+│   ├── requirements.txt   # Python依赖
+│   ├── main.spec          # PyInstaller打包配置
+│   └── src/               # Python源代码
+│       └── ...
+└── build/                 # 构建输出目录
+    ├── python/            # Python打包输出
+    └── electron/          # Electron打包输出
+```
+
+### 开发与打包
+
+```bash
+# 进入项目目录
+cd 项目名称
+
+# 安装依赖
+npm install
+cd python
+pip install -r requirements.txt
+cd ..
+
+# 运行开发环境
+npm start
+
+# 打包 Python 应用
+npm run build:python
+
+# 打包 Python 应用（详细模式，显示更多信息）
+npm run build:python:verbose
+
+# 打包完整应用
+npm run build:all
+
+# 生成特定平台的安装包
+npm run build:win    # Windows
+npm run build:mac    # macOS
+npm run build:linux  # Linux
+```
+
+### 常见问题解决
+
+如果在打包或运行时遇到模块导入错误：
+
+1. 确保已正确安装所有依赖：
+```bash
+cd python
+pip install -r requirements.txt
+```
+
+2. 尝试使用调试模式重新创建项目：
+```bash
+projects electron-python 项目名称 --debug-mode
+```
+
+3. 查看详细的打包日志：
+```bash
+npm run build:python:verbose
+```
+
+4. 手动编辑 `python/main.spec` 文件，在 `hiddenimports` 列表中添加缺失的模块
+
+### 打包错误解决
+
+如果遇到与 electron-builder 相关的错误：
+
+1. 确保已设置作者信息：
+```bash
+projects electron-python 项目名称 --author-name "Your Name" --author-email "your.email@example.com"
+```
+
+2. 如果出现 "Cannot compute electron version" 错误，检查 package.json 中的版本号是否为固定版本（没有 ^ 或 ~ 符号）
+
+3. 打包前确保已正确安装 electron 和 electron-builder：
+```bash
+npm install electron@25.0.0 electron-builder@24.0.0 @electron/rebuild --save-dev
+```
+
+4. 如果遇到 "@electron/rebuild" 相关错误，可以运行：
+```bash
+npm run postinstall
+```
+这将安装所有必要的应用依赖项。

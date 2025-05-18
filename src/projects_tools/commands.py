@@ -13,6 +13,7 @@ from .components import (
     CommonFilesComponent,
     ProxyComponent
 )
+from .electron_python import ElectronPythonApp
 
 @click.group()
 def cli():
@@ -68,3 +69,14 @@ def create(project_name, backend, frontend, frontend_type, enable_proxy):
     
     # 使用工厂创建项目
     ProjectFactory.create_project(project_name, components)
+
+@cli.command(help="创建Electron+Python项目")
+@click.argument("project_name")
+@click.option("--output-dir", default=None, help="输出目录，默认为当前目录")
+@click.option("--debug-mode", is_flag=True, help="启用调试模式")
+@click.option("--author-name", default=None, help="项目作者姓名")
+@click.option("--author-email", default=None, help="项目作者邮箱")
+def electron_python(project_name, output_dir, debug_mode, author_name, author_email):
+    """创建一个新的Electron+Python项目"""
+    app = ElectronPythonApp()
+    app.create_project(project_name, output_dir, debug_mode, author_name, author_email)

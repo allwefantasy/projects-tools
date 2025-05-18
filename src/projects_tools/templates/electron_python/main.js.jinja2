@@ -1,0 +1,131 @@
+const { app, BrowserWindow, ipcMain } = require('electron');
+const path = require('path');
+const { spawn } = require('child_process');
+const process = require('process');
+const fs = require('fs');
+
+// 全局变量保存Python进程引用
+let pythonProcess = null;
+let mainWindow = null;
+
+// 获取Python可执行文件路径
+function getPythonExecutablePath() {
+  // 判断是开发环境还是生产环境
+  const isDev = !app.isPackaged;
+  
+  if (isDev) {
+    // 开发环境直接使用Python脚本
+    return {
+      path: 'python',
+      args: [path.join(__dirname, 'python', 'main.py')]
+    };
+  } else {
+    // 生产环境使用打包后的可执行文件
+    let pythonExecutable;
+    
+    if (process.platform === 'win32') {
+      // Windows
+      pythonExecutable = path.join(process.resourcesPath, 'python', 'main.exe');
+    } else if (process.platform === 'darwin') {
+      // macOS
+      pythonExecutable = path.join(process.resourcesPath, 'python', 'main');
+    } else {
+      // Linux
+      pythonExecutable = path.join(process.resourcesPath, 'python', 'main');
+    }
+    
+    return {
+      path: pythonExecutable,
+      args: []
+    };
+  }
+}
+
+// 启动Python进程
+function startPythonProcess() {
+  const port = {{ python_port }};  // 可以随机生成端口
+  const { path: pythonPath, args: pythonArgs } = getPythonExecutablePath();
+  
+  // 添加端口参数
+  const allArgs = [...pythonArgs, port.toString()];
+  
+  console.log(`Starting Python process: ${pythonPath} ${allArgs.join(' ')}`);
+  
+  // 启动Python进程
+  pythonProcess = spawn(pythonPath, allArgs);
+  
+  // 监听Python进程输出
+  pythonProcess.stdout.on('data', (data) => {
+    console.log(`Python stdout: ${data}`);
+  });
+  
+  pythonProcess.stderr.on('data', (data) => {
+    console.error(`Python stderr: ${data}`);
+  });
+  
+  pythonProcess.on('close', (code) => {
+    console.log(`Python process exited with code ${code}`);
+  });
+  
+  // 返回端口号，用于Electron与Python通信
+  return port;
+}
+
+// 创建主窗口
+function createWindow() {
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false
+    }
+  });
+  
+  // 加载应用的index.html
+  mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
+  
+  // 打开开发者工具
+  if (!app.isPackaged) {
+    mainWindow.webContents.openDevTools();
+  }
+}
+
+// 应用准备就绪时
+app.whenReady().then(() => {
+  // 启动Python进程
+  const pythonPort = startPythonProcess();
+  
+  // 将Python端口号保存到全局变量
+  global.pythonPort = pythonPort;
+  
+  // 创建窗口
+  createWindow();
+  
+  app.on('activate', function () {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+});
+
+// 当所有窗口关闭时退出应用
+app.on('window-all-closed', function () {
+  // 在macOS上，除非用户用Cmd + Q确定地退出
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+// 应用退出前清理
+app.on('before-quit', () => {
+  // 终止Python进程
+  if (pythonProcess !== null) {
+    if (process.platform === 'win32') {
+      // Windows上使用taskkill强制终止进程
+      spawn('taskkill', ['/pid', pythonProcess.pid, '/f', '/t']);
+    } else {
+      // macOS和Linux上使用kill信号
+      pythonProcess.kill('SIGTERM');
+    }
+  }
+}); 

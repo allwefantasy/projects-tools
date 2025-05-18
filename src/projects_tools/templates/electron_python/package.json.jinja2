@@ -1,0 +1,55 @@
+{
+  "name": "{{ project_name }}",
+  "version": "1.0.0",
+  "description": "Electron应用与Python引擎集成示例",
+  "main": "main.js",
+  "author": {
+    "name": "{{ author_name }}",
+    "email": "{{ author_email }}"
+  },
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:python": "cd python && pyinstaller main.spec --noconfirm --distpath ../build/python --workpath ../build/python/build --clean",
+    "build:python:verbose": "cd python && pyinstaller main.spec -v --noconfirm --distpath ../build/python --workpath ../build/python/build --clean",
+    "build:all": "npm run build:python && npm run build",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "appId": "com.example.{{ project_name }}",
+    "productName": "{{ project_name }}",
+    "files": [
+      "**/*",
+      "!python/",
+      "!build/python/build/"
+    ],
+    "extraResources": [
+      {
+        "from": "build/python/dist/main",
+        "to": "python"
+      }
+    ],
+    "win": {
+      "target": ["nsis"]
+    },
+    "mac": {
+      "target": ["dmg"]
+    },
+    "linux": {
+      "target": ["AppImage"]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
+  },
+  "devDependencies": {    
+    "@electron/rebuild": "^3.2.10",
+    "electron": "25.0.0",
+    "electron-builder": "^23.6.0"
+  }
+} 

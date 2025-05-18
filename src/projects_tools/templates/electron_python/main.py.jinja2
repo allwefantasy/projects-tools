@@ -1,0 +1,51 @@
+import sys
+import os
+import json
+
+# 如果是打包后的应用，添加必要的路径
+if getattr(sys, 'frozen', False):
+    # 当我们使用 PyInstaller 打包应用时，所有的模块都会被包含在可执行文件中
+    # 这里添加一些额外的设置以确保应用能正确找到资源
+    application_path = os.path.dirname(sys.executable)
+    os.environ['FLASK_ENV'] = 'production'
+    
+    # 确保临时文件能被正确创建
+    if not os.environ.get('TMPDIR'):
+        os.environ['TMPDIR'] = os.path.join(application_path, 'temp')
+        if not os.path.exists(os.environ['TMPDIR']):
+            os.makedirs(os.environ['TMPDIR'])
+
+# 导入必要的模块
+try:
+    from flask import Flask, request, jsonify
+    from flask_cors import CORS
+except ImportError as e:
+    # 打印更详细的错误信息
+    print(f"导入错误: {e}")
+    print(f"Python 路径: {sys.path}")
+    sys.exit(1)
+
+# 初始化Flask应用
+app = Flask(__name__)
+CORS(app)  # 允许跨域请求
+
+# 示例API路由
+@app.route('/api/hello', methods=['GET'])
+def hello():
+    name = request.args.get('name', 'World')
+    return jsonify({'message': f'Hello, {name}!'})
+
+# 这里添加你的Python引擎核心功能
+# ...
+
+# 主入口
+if __name__ == '__main__':
+    try:
+        # 从命令行参数获取端口
+        port = int(sys.argv[1]) if len(sys.argv) > 1 else {{ python_port }}
+        
+        # 启动Flask服务
+        app.run(host='127.0.0.1', port=port, debug=False)
+    except Exception as e:
+        print(f"启动服务器时出错: {e}")
+        sys.exit(1) 

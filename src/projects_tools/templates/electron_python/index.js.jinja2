@@ -1,0 +1,25 @@
+// 页面加载完成后执行
+document.addEventListener('DOMContentLoaded', () => {
+  const responseElement = document.getElementById('response');
+  const testButton = document.getElementById('testButton');
+  
+  // 获取Python服务端口
+  const pythonPort = window.electronAPI.getPythonPort();
+  const pythonApiUrl = `http://localhost:${pythonPort}`;
+  
+  // 测试按钮点击事件
+  testButton.addEventListener('click', async () => {
+    try {
+      responseElement.textContent = '正在请求Python API...';
+      
+      // 调用Python API
+      const response = await fetch(`${pythonApiUrl}/api/hello?name=Electron`);
+      const data = await response.json();
+      
+      // 显示响应结果
+      responseElement.textContent = `Python响应: ${data.message}`;
+    } catch (error) {
+      responseElement.textContent = `错误: ${error.message}`;
+    }
+  });
+}); 
